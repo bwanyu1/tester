@@ -63,11 +63,11 @@ const Quiz = () => {
       return (
         <form onSubmit={handleSubmit}>
           <p>{currentQuestion.question}</p>
-          {currentQuestion.options.map((option, index) => {
-            const optionId = `option${index}`; // Generate unique option ID
-            return (
-              <div key={optionId}>
-                <label>
+          <div className="options" role="radiogroup" aria-label={`問題 ${currentQuestionIndex + 1} の選択肢`}>
+            {currentQuestion.options.map((option, index) => {
+              const optionId = `option${index}`; // Generate unique option ID
+              return (
+                <div key={optionId} className={`option ${selectedOption === optionId ? 'selected' : ''}`}>
                   <input
                     type="radio"
                     id={optionId}
@@ -75,12 +75,13 @@ const Quiz = () => {
                     value={option}
                     checked={selectedOption === optionId}
                     onChange={handleOptionChange}
+                    aria-checked={selectedOption === optionId}
                   />
-                  {option}
-                </label>
-              </div>
-            );
-          })}
+                  <label htmlFor={optionId}>{option}</label>
+                </div>
+              );
+            })}
+          </div>
           <button type="submit" className="submit-button">回答を送信</button>
         </form>
       );
@@ -88,7 +89,7 @@ const Quiz = () => {
       return (
         <form onSubmit={handleSubmit}>
           <p>{currentQuestion.question}</p>
-          <textarea value={userAnswer} onChange={handleInputChange} />
+          <textarea aria-label="回答入力" rows={4} value={userAnswer} onChange={handleInputChange} />
           <button type="submit" className="submit-button">回答を送信</button>
         </form>
       );
@@ -113,14 +114,14 @@ const Quiz = () => {
   return (
     <div className="quiz-container">
       <div className={`accordion ${isAccordionOpen ? 'open' : ''}`}>
-        <button onClick={toggleAccordion} className="accordion-toggle">
+        <button type="button" onClick={toggleAccordion} className="accordion-toggle">
           {isAccordionOpen ? '目次を閉じる' : '目次を開く'}
         </button>
         {isAccordionOpen && (
           <ul>
             {quizData.map((question, index) => (
               <li key={index}>
-                <button onClick={() => handleJumpToQuestion(index)}>
+                <button type="button" onClick={() => handleJumpToQuestion(index)}>
                   問題 {index + 1}
                 </button>
               </li>
@@ -131,14 +132,14 @@ const Quiz = () => {
       <div className="quiz-content">
         {renderQuestion()}
         {showAnswer && (
-          <div>
-            <p>正解: {currentQuestion.answer}</p>
-            <p>{checkAnswer() ? '正解です！' : '不正解です。'}</p>
+          <div className={checkAnswer() ? 'result' : 'result incorrect'}>
+            <p style={{margin:0,fontWeight:700}}>正解: {currentQuestion.answer}</p>
+            <p style={{margin:0}}>{checkAnswer() ? '正解です！' : '不正解です。'}</p>
           </div>
         )}
         <div className="navigation-buttons">
-          <button onClick={handlePreviousQuestion} className="nav-button">もどる</button>
-          <button onClick={handleNextQuestion} className="nav-button">次へ</button>
+          <button type="button" onClick={handlePreviousQuestion} className="nav-button">もどる</button>
+          <button type="button" onClick={handleNextQuestion} className="nav-button">次へ</button>
         </div>
       </div>
     </div>
